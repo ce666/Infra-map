@@ -16,7 +16,7 @@
     <script src="infra_state3.js"></script>
 </head>
 <body onload="main()">
-    <h2>Test LeafLet Map</h2>
+    <h1>Test LeafLet Map</h1>
  
     <div id="map"></div>
     <div>
@@ -25,6 +25,7 @@
         <!-- <button type="submit" onclick="let layerAzimuth = drawAzimuth(map,centerPoint,backAzimuth)">Azimuth</button> -->
         <button type="submit" onclick="drawAzimuthJSON()">Draw Azimuth</button>
         <button type="submit" onclick="clearAllAzimuth()">Clear Azimuth</button>
+        <button type="submit" onclick="resizeMap()">Resize Map</button>
 
     </div>
     
@@ -34,26 +35,24 @@
         let map = initMap(mapCenter);
         drawMap(map);
         
-        let azimuthLayerGroup = L.layerGroup([]);
+        // let azimuthLayerGroup = L.layerGroup([]);
         let aLG;
-        let test;
+        let epicenterLayerGroup = L.layerGroup([]);
         
         
         // -----------------------------------------
-        centerPoint = [56.452143,43.051791];
-        sAzimuth = 55;
+        // centerPoint = [56.452143,43.051791];
+        // sAzimuth = 55;
         //    drawAzimuth(map,centerPoint,sAzimuth);
-        centerPoint = [56.45726557,43.18966684];
-        sAzimuth = 53;
+        // centerPoint = [56.45726557,43.18966684];
+        // sAzimuth = 53;
         //    drawAzimuth(map,centerPoint,sAzimuth);
-        centerPoint = [56.38489,43.142570];
-        sAzimuth = 48
+        // centerPoint = [56.38489,43.142570];
+        // sAzimuth = 48
         //    drawAzimuth(map,centerPoint,sAzimuth);
-        centerPoint = [56.40572738,43.17841572];
-        sAzimuth = 390
-        //    drawAzimuth(map,centerPoint,sAzimuth);
-        
-    
+        // centerPoint = [56.40572738,43.17841572];
+        // sAzimuth = 390
+        //    drawAzimuth(map,centerPoint,sAzimuth);        
         
         </script>    
 </body>

@@ -1,0 +1,18 @@
+[
+    {
+        "Name": "",
+        "Peak F-Stat Time (UTC)": "2023-10-10T12:20:08.14",
+        "F Statistic": 1.9,
+        "Trace Velocity (m/s)": 299.38,
+        "Back Azimuth": -180.37,
+        "Latitude": 55.1147,
+        "Longitude": 36.5694,
+        "Elevation": null,
+        "Start": null,
+        "End": null,
+        "Array Dimension": 4,
+        "Method": "",
+        "Event": "",
+        "Note": ""
+    }
+]

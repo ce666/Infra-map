@@ -1,19 +1,20 @@
-
+let arrayLatLon = [];
 
 
 function initMap(mcParam = [55.11429, 36.56969]){
-// --------------------------------------------------------
+    // --------------------------------------------------------
     // let mapCenter = [55.11429, 36.56969];
     // if (mcParam != undefined){mapCenter = mcParam};
     // console.log('mapCanter: ',mapCenter);   
     //Определяем карту, координаты центра и начальный масштаб
     let mapLayer = L.map('map').setView(mcParam, 11);
-return mapLayer;
+    return mapLayer;
 }
 
 function drawMap(map){
-// --------------------------------------------------------
-    let mapProvider1 = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    // --------------------------------------------------------
+    let mapProvider1 = 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
+    // let mapProvider1 = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     let mapProvider2 = 'https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=ba3556f7645b4ee296a9640f5abc12ce';
     let mapProvider3 = 'http://maps.opengeo.org/geowebcache/service/wms'
     
@@ -26,7 +27,20 @@ function drawMap(map){
     L.control.layers(baseMap, {}).addTo(map);
     L.control.ruler().addTo(map);
     // console.log(map);
-return map;
+    return map;
+}
+
+function resizeMap(arrayLatLon){
+    let test;
+    console.log('arrayLatLon - ',arrayLatLon);
+    // markersLatLon = [[56.201, 43.201],[56.481,42.999]]
+    // console.log('Click')
+        // markerCoordinates.forEach(function(coord){
+        //     L.marker(coord).addTo(map);
+        // })
+    if (arrayLatLon != undefined)
+        test = map.fitBounds(arrayLatLon);
+    // console.log('test - ',test)
 }
 
 function mapCenterCalc(Infra_status){
@@ -82,16 +96,21 @@ function groupCenterCalc(Infra_status){
 function drawAllGroups(Infra_status){
     // --------------------------------------------------------
     // Отрисовка всех датчиков по группам
+    // Отрисовка центров гупп и масшшабирование карты по всем группам
+    // Возвращает массив с координатами центров гупп
     let infraGroup; 
-    
+    let groupCenterLatLon =[];
     let groupState = false;
     for(gKey in Infra_status){
         infraGroup = Infra_status[gKey];
         // console.log('ifraGroup: ',infraGroup);
         groupState = drawSensorGroup(infraGroup);
         // console.log('groupState - ',groupState)
-        drawCenterGroup(infraGroup,groupState);
+        groupCenterLatLon.push(drawCenterGroup(infraGroup,groupState));
     }
+    // console.log('groupCenterLatLon - ',groupCenterLatLon);
+    map.fitBounds(groupCenterLatLon);
+    // resizeMap(groupCenterLatLon);
 }
 
 function drawSensorGroup(infraGroup){
@@ -130,7 +149,7 @@ function drawCenterGroup(infraGroup,status){
     // --------------------------------------------------------
     // Получает объект группы датчиков и отрисовывает центр
     let groupCenter = groupCenterCalc(infraGroup);
-    // console.log('Status - '+ status);
+    // console.log('groupCenter - '+ groupCenter);
     L.circleMarker(groupCenter,{
         radius: 4,
         color: 'green',
@@ -143,6 +162,7 @@ function drawCenterGroup(infraGroup,status){
             opacity: 0.5
         }).addTo(map);
     } 
+    return groupCenter
 }
 
 function drawAzimuth(map,cPoint,sAzimuth){
@@ -161,10 +181,10 @@ function drawAzimuth(map,cPoint,sAzimuth){
             weight: 1,
             fill : false,
         })
-        // .addTo(map);
-        // console.log('drawAzimuth - ',layerAzimuth)
+        // .addTo(map);  - не добавляем,  все отрисовывает map.addLayer
         azimuthLayerGroup.addLayer(layerAzimuth);
         map.addLayer(azimuthLayerGroup)
+        // console.log('drawAzimuth - ',layerAzimuth)
         return 1
 }
 

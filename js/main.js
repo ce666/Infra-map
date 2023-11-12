@@ -1,7 +1,8 @@
 
+let azimuthLayerGroup = L.layerGroup([]);
 
-    function main(){
-        
+function main(){
+    
         drawAllGroups(Infra_status3);
 
 // -----------------------------------------
