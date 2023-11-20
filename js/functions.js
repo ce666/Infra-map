@@ -14,15 +14,18 @@ function initMap(mcParam = [55.11429, 36.56969]){
 function drawMap(map){
     // --------------------------------------------------------
     let mapProvider1 = 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
-    // let mapProvider1 = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     let mapProvider2 = 'https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=ba3556f7645b4ee296a9640f5abc12ce';
-    let mapProvider3 = 'http://maps.opengeo.org/geowebcache/service/wms'
+    let Esri_WorldImagery = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    let mapProvider4 = 'http://vec01.maps.yandex.net/tiles?l=map&v=4.55.2&z={z}&x={x}&y={y}&scale=2&lang=ru_RU';
+    let mapProvider5 = 'http://maps.opengeo.org/geowebcache/service/wms'
     
     let layerOSM = L.tileLayer(mapProvider1,{}).addTo(map);
     let layerTNF = L.tileLayer(mapProvider2,{}).addTo(map);
+    let layerIMG = L.tileLayer(Esri_WorldImagery,{}).addTo(map);
     let baseMap = {
         OSM: layerOSM,
         TNF: layerTNF,
+        IMG: layerIMG,
     };
     L.control.layers(baseMap, {}).addTo(map);
     L.control.ruler().addTo(map);
@@ -53,7 +56,7 @@ function mapCenterCalc(Infra_status){
     let groupSumLon = 0;
     let counter = 0;
     for(gKey in Infra_status){
-        infraGroup = Infra_status[gKey];
+        infraGroup = Infra_status[gKey].reg;
         groupCenter = groupCenterCalc(infraGroup);
         groupLat = Number(groupCenter[0]);
         groupLon = Number(groupCenter[1]);
@@ -94,6 +97,26 @@ function groupCenterCalc(Infra_status){
 }
 
 function drawAllGroups(Infra_status){
+    // --------------------------------------------------------
+    // Отрисовка всех датчиков по группам
+    // Отрисовка центров гупп и масшшабирование карты по всем группам
+    // Возвращает массив с координатами центров гупп
+    let infraGroup; 
+    let groupCenterLatLon =[];
+    let groupState = false;
+    for(gKey in Infra_status){
+        infraGroup = Infra_status[gKey].reg;
+        // console.log('ifraGroup: ',infraGroup);
+        groupState = drawSensorGroup(infraGroup);
+        // console.log('groupState - ',groupState)
+        groupCenterLatLon.push(drawCenterGroup(infraGroup,groupState));
+    }
+    // console.log('groupCenterLatLon - ',groupCenterLatLon);
+    map.fitBounds(groupCenterLatLon);
+    // resizeMap(groupCenterLatLon);
+}
+
+function drawAllGroups2(Infra_status){
     // --------------------------------------------------------
     // Отрисовка всех датчиков по группам
     // Отрисовка центров гупп и масшшабирование карты по всем группам
@@ -169,6 +192,7 @@ function drawAzimuth(map,cPoint,sAzimuth){
     // --------------------------------------------------------
     // Отрисовка Азимута
     // console.log('Azimuth Point: ',cPoint);
+    let test1
     const azmOffset = 0.0000000001;
     const azmRadius = 1000000;
     let layerAzimuth = L.semiCircle(cPoint,{
@@ -181,15 +205,36 @@ function drawAzimuth(map,cPoint,sAzimuth){
             weight: 1,
             fill : false,
         })
-        // .addTo(map);  - не добавляем,  все отрисовывает map.addLayer
-        azimuthLayerGroup.addLayer(layerAzimuth);
+        // .addTo(map).bindPopup(sAzimuth);  //- не добавляем,  все отрисовывает map.addLayer
+        test1 = azimuthLayerGroup.addLayer(layerAzimuth);
         map.addLayer(azimuthLayerGroup)
-        // console.log('drawAzimuth - ',layerAzimuth)
+
+        console.log('test1 - ', test1)
+
+        console.log('azimuthLayerGroup2 - ', azimuthLayerGroup)
+        console.log('layerAzimuth - ',layerAzimuth)
         return 1
 }
 
+function loadAzimuthData(){
+    let azimuthLat, azimuthLon, azimuthDeg, azimuthTime,azimuthName
+    let cPoint = [0,0]
+    for(sKey in Infra_Azimuth){
+        azimuthLat = Infra_Azimuth[sKey].lat;
+        azimuthLon = Infra_Azimuth[sKey].lon;
+        azimuthDeg = Infra_Azimuth[sKey].deg;
+        azimuthTime = Infra_Azimuth[sKey].time;
+        azimuthName = Infra_Azimuth[sKey].name;
+        cPoint = [azimuthLat,azimuthLon]
+        console.log(azimuthName,azimuthDeg,azimuthTime)
+        drawAzimuth(map,cPoint,azimuthDeg)
+        console.log(sKey,cPoint)
+
+    }
+}
+
 function drawAzimuthJSON(){
-    let azimuthLat, azimuthLon, azimuthDeg, azimuthTime
+    let azimuthLat, azimuthLon, azimuthDeg, azimuthTime,azimuthName
     let cPoint = [0,0]
     for(sKey in Infra_Azimuth){
         console.log(sKey)
@@ -197,7 +242,7 @@ function drawAzimuthJSON(){
         azimuthLon = Infra_Azimuth[sKey].lon;
         azimuthDeg = Infra_Azimuth[sKey].deg;
         azimuthTime = Infra_Azimuth[sKey].stat;
-        // azimuthName = Infra_Azimuth[sKey].name;
+        azimuthName = Infra_Azimuth[sKey].name;
         cPoint = [azimuthLat,azimuthLon]
         drawAzimuth(map,cPoint,azimuthDeg)
 
